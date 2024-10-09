@@ -35,6 +35,9 @@ namespace Cinematics.ScreenEffects {
 
 		[NonSerialized]
 		private bool m_FadeInRunning;
+
+		[NonSerialized]
+		private bool DoOnce;
 		
 		#endregion
 		
@@ -66,8 +69,13 @@ namespace Cinematics.ScreenEffects {
 			if (m_FadeInRunning && m_UIFadeoutGroup.alpha > 0f) {
 				m_UIFadeoutGroup.alpha -= Time.deltaTime / m_CinematicsManager.TransitionDurationTime;
 				m_CinematicsManager.ElevatorMover.MoveElevatorTopToMiddle();
+				if (DoOnce == false) {
+					StartCoroutine(m_CinematicsManager.RoomManager.NextRoom());
+					DoOnce = true;
+				}
 			} else {
 				m_FadeInRunning = false;
+				DoOnce = false;
 			}
 		}
 

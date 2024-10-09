@@ -18,6 +18,9 @@ namespace Cinematics.Manager {
 		[SerializeField]
 		private float m_TransitionDuration = 3f;
 		
+		[SerializeField]
+		private RoomManager m_RoomManager;
+		
 		#endregion
 		
 		
@@ -47,6 +50,12 @@ namespace Cinematics.Manager {
 			}
 			set {
 				m_TransitionDuration = value;
+			}
+		}
+
+		public RoomManager RoomManager {
+			get {
+				return m_RoomManager;
 			}
 		}
 		
