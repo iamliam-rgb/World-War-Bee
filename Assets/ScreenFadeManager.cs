@@ -3,6 +3,7 @@ namespace Cinematics.ScreenEffects {
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using Manager;
 	using UnityEngine;
 	using UnityEngine.Serialization;
 	using UnityEngine.UIElements;
@@ -16,34 +17,8 @@ namespace Cinematics.ScreenEffects {
 		private CanvasGroup m_UIFadeoutGroup;
 		
 		[SerializeField]
-		private float m_FadeoutDuration = 0.5f;
-		
-		[SerializeField]
-		private float m_FadeInDuration = 0.5f;
+		private CinematicsManager m_CinematicsManager;
 
-		#endregion
-		
-		
-		#region  Private Properties
-		
-		private IEnumerator FadeoutCoroutine {
-			get {
-				return m_FadeoutCoroutine;
-			}
-			set {
-				m_FadeoutCoroutine = value;
-			}
-		}
-
-		private IEnumerator FadeInCoroutine {
-			get {
-				return m_FadeInCoroutine;
-			}
-			set {
-				m_FadeInCoroutine = value;
-			}
-		}
-		
 		#endregion
 		
 		
@@ -55,58 +30,49 @@ namespace Cinematics.ScreenEffects {
 		[NonSerialized]
 		private IEnumerator m_FadeInCoroutine;
 		
+		[NonSerialized]
+		private bool m_FadeoutRunning;
+
+		[NonSerialized]
+		private bool m_FadeInRunning;
+		
 		#endregion
 		
 		
 		#region Public Methods
 
 		public void FadeOut() {
-			if (this.FadeoutCoroutine != null) {
-				StopAllCoroutines();
-				this.FadeoutCoroutine = null;
-			}
-
-			this.FadeoutCoroutine = FadeoutCoroutineImpl();
-			StartCoroutine(this.FadeoutCoroutine);
+			m_FadeoutRunning = true;
 		}
 
 		public void FadeIn() {
-			if (this.FadeInCoroutine != null) {
-				StopAllCoroutines();
-				this.FadeInCoroutine = null;
-			}
-			
-			this.FadeInCoroutine = FadeInCoroutineImpl();
-			StartCoroutine(this.FadeInCoroutine);
+			m_FadeInRunning = true;
 		}
 		
 		#endregion
 		
-		#region Private Methods
-
-		private IEnumerator FadeoutCoroutineImpl() {
-			// Set Alpha
-			m_UIFadeoutGroup.alpha = 0;
-			
-			float alpha = 0;
-			
-			while (alpha < 1) {
-				alpha += Time.deltaTime / m_FadeoutDuration;
-				m_UIFadeoutGroup.alpha = alpha;
-			}
-			
-			// Finalize Alpha
-			m_UIFadeoutGroup.alpha = 1;
-
-			yield break;
-		}
-
-		private IEnumerator FadeInCoroutineImpl() {
-			yield return new WaitForSeconds(m_FadeInDuration);
-		}
 		
-		#endregion
+		#region Monobehaviour Methods
 
+		public void Update() {
+			if (m_FadeoutRunning && m_UIFadeoutGroup.alpha < 1f) {
+				m_UIFadeoutGroup.alpha += Time.deltaTime / m_CinematicsManager.TransitionDurationTime;
+				m_CinematicsManager.ElevatorMover.MoveElevatorMiddleToBottom();
+			} else {
+				m_FadeoutRunning = false;
+				FadeIn();
+			}
+
+			if (m_FadeInRunning && m_UIFadeoutGroup.alpha > 0f) {
+				m_UIFadeoutGroup.alpha -= Time.deltaTime / m_CinematicsManager.TransitionDurationTime;
+				m_CinematicsManager.ElevatorMover.MoveElevatorTopToMiddle();
+			} else {
+				m_FadeInRunning = false;
+			}
+		}
+
+		#endregion
+		
 		
 	}
 }

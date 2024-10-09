@@ -15,6 +15,9 @@ namespace Cinematics.Manager {
 		[SerializeField]
 		private KeyCode m_PreviousLevelKey = KeyCode.Comma;
 		
+		[SerializeField]
+		private float m_TransitionDuration = 3f;
+		
 		#endregion
 		
 		
@@ -26,9 +29,26 @@ namespace Cinematics.Manager {
 		
 		#endregion
 		
+		
 		#region NonSerialized Fields
 		
-		private ScreenFadeManager _screenFadeManager;
+		private ScreenFadeManager m_ScreenFadeManager;
+		
+		private ElevatorMover m_ElevatorMover;
+		
+		#endregion
+		
+		
+		#region Public Properites
+
+		public float TransitionDurationTime {
+			get {
+				return m_TransitionDuration;
+			}
+			set {
+				m_TransitionDuration = value;
+			}
+		}
 		
 		#endregion
 		
@@ -37,7 +57,13 @@ namespace Cinematics.Manager {
 
 		private ScreenFadeManager ScreenFadeManager {
 			get {
-				return  _screenFadeManager ?? GetComponent<ScreenFadeManager>();
+				return  m_ScreenFadeManager ?? GetComponent<ScreenFadeManager>();
+			}
+		}
+
+		public ElevatorMover ElevatorMover {
+			get {
+				return m_ElevatorMover ?? GetComponent<ElevatorMover>();
 			}
 		}
 		
@@ -48,7 +74,7 @@ namespace Cinematics.Manager {
 
 		private void ListenForCinematicInput() {
 			// Next level
-			if (Input.GetKey(m_NextLevelKey) || Input.GetKey(m_PreviousLevelKey)) {
+			if (Input.GetKeyDown(m_NextLevelKey) || Input.GetKeyDown(m_PreviousLevelKey)) {
 				this.ScreenFadeManager.FadeOut();
 			}
 		}
