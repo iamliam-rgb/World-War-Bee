@@ -1,2 +1,2 @@
-# World-War-Bee
-Beez, Bears, Honey, Cybears, liberation
+# Coding Playground
+Beez, Bears, Honey, Cybears, liberation, learning
